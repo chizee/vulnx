@@ -36,17 +36,6 @@ archives:
 checksum:
   algorithm: sha256
 
-dockers:
-  - image_templates:
-      - "projectdiscovery/vulnx:latest"
-      - "projectdiscovery/vulnx:{{ .Tag }}"
-      - "projectdiscovery/vulnx:v{{ .Major }}"
-    dockerfile: Dockerfile.vulnx
-    use: buildx
-    build_flag_templates:
-      - --platform=linux/amd64
-      - --build-arg=VERSION={{ .Version }}
-
 announce:
   slack:
     enabled: true

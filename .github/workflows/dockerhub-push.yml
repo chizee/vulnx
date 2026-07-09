@@ -9,6 +9,7 @@ on:
 
 jobs:
   docker:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest-16-cores
     strategy:
       matrix:
@@ -19,11 +20,20 @@ jobs:
     steps:
       - name: Git Checkout
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Get Github tag
         id: meta
         run: |
-          curl --silent "https://api.github.com/repos/projectdiscovery/vulnx/releases/latest" | jq -r .tag_name | xargs -I {} echo TAG={} >> $GITHUB_OUTPUT
+          git fetch --tags --force
+          TAG=$(git describe --tags --exact-match HEAD 2>/dev/null || true)
+          if [ -z "$TAG" ]; then
+            TAG=$(curl --silent "https://api.github.com/repos/projectdiscovery/vulnx/releases/latest" | jq -r .tag_name)
+          fi
+          MAJOR="v$(echo "${TAG#v}" | cut -d. -f1)"
+          echo "TAG=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "MAJOR=${MAJOR}" >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -44,6 +54,9 @@ jobs:
           file: ${{ matrix.dockerfile }}
           platforms: linux/amd64,linux/arm64,linux/arm
           push: true
-          tags: ${{ matrix.image }}:latest,${{ matrix.image }}:${{ steps.meta.outputs.TAG }}
+          tags: |
+            ${{ matrix.image }}:latest
+            ${{ matrix.image }}:${{ steps.meta.outputs.TAG }}
+            ${{ matrix.image }}:${{ steps.meta.outputs.MAJOR }}
           build-args: |
             VERSION=${{ steps.meta.outputs.TAG }}
