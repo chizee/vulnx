@@ -1,8 +1,6 @@
 module github.com/projectdiscovery/vulnx/v2
 
-go 1.24.0
-
-toolchain go1.24.4
+go 1.25.0
 
 require (
 	github.com/jedib0t/go-pretty/v6 v6.8.3
@@ -13,7 +11,7 @@ require (
 	github.com/projectdiscovery/retryablehttp-go v1.3.11
 	github.com/projectdiscovery/utils v0.11.1
 	github.com/spf13/cobra v1.10.2
-	golang.org/x/term v0.39.0
+	golang.org/x/term v0.45.0
 )
 
 require (
@@ -107,7 +105,7 @@ require (
 	golang.org/x/net v0.48.0 // indirect
 	golang.org/x/oauth2 v0.27.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
-	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.32.0 // indirect
 	golang.org/x/tools v0.39.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
